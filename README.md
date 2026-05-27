@@ -1,6 +1,6 @@
 from pathlib import Path
 
-content = """# 📌 ResepKu Backend Setup Guide
+# 📌 ResepKu Backend Setup Guide
 
 ## 📖 Deskripsi
 Panduan ini digunakan untuk menjalankan backend **ResepKu** sebelum menjalankan aplikasi Flutter. Pastikan mengikuti langkah-langkah berikut secara berurutan agar sistem dapat berjalan dengan baik.
@@ -78,15 +78,3 @@ http://IP_LAPTOP_KAMU:8000
 - Jangan tutup terminal php artisan serve
 - Pastikan .env sudah dikonfigurasi dengan benar (database MySQL)
 - Jika error port, ganti misalnya ke 8001
-
----
-
-## 👨‍💻 Developer
-ResepKu Project - Backend & API  
-Untuk kebutuhan tugas / UAS / praktikum
-"""
-
-file_path = Path("/mnt/data/README_ResepKu.md")
-file_path.write_text(content, encoding="utf-8")
-
-file_path.name
