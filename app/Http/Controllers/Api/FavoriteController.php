@@ -72,11 +72,24 @@ class FavoriteController extends Controller
         $favorites = Favorite::with('recipe')
             ->where('user_id', Auth::id())
             ->latest()
-            ->get();
+            ->get()
+            ->pluck('recipe');
 
         return response()->json([
             'success' => true,
             'data' => $favorites
+        ]);
+    }
+
+    public function check($recipe_id)
+    {
+        $exists = Favorite::where('user_id', Auth::id())
+            ->where('recipe_id', $recipe_id)
+            ->exists();
+
+        return response()->json([
+            'success' => true,
+            'is_favorite' => $exists
         ]);
     }
 }

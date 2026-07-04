@@ -60,36 +60,68 @@ class ProfileController extends Controller
     }
 
     public function changePassword(Request $request)
-{
-    $user = auth()->user();
+    {
+        $user = auth()->user();
 
-    $validated = $request->validate([
-        'current_password' => 'required',
-        'new_password' => 'required|min:6|confirmed',
-    ]);
+        $validated = $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ]);
 
-    // cek password lama
-    if (!Hash::check(
-        $validated['current_password'],
-        $user->password
-    )) {
+        // cek password lama
+        if (!Hash::check(
+            $validated['current_password'],
+            $user->password
+        )) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Password lama salah'
+            ], 400);
+        }
+
+        // update password
+        $user->password = Hash::make(
+            $validated['new_password']
+        );
+
+        $user->save();
 
         return response()->json([
-            'status' => false,
-            'message' => 'Password lama salah'
-        ], 400);
+            'status' => true,
+            'message' => 'Password berhasil diubah'
+        ]);
     }
 
-    // update password
-    $user->password = Hash::make(
-        $validated['new_password']
-    );
+    public function uploadPhoto(Request $request)
+    {
+        $user = auth()->user();
 
-    $user->save();
+        $validator = Validator::make($request->all(), [
+            'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-    return response()->json([
-        'status' => true,
-        'message' => 'Password berhasil diubah'
-    ]);
-}
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        $photo = $request->file('photo');
+
+        $filename = time() . '.' . $photo->getClientOriginalExtension();
+
+        $photo->storeAs('profile', $filename, 'public');
+
+        $user->photo = asset('storage/profile/' . $filename);
+
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Foto profil berhasil diperbarui',
+            'user' => $user,
+        ]);
+    }
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\RecipeController;
+use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response; // Added for image serving
@@ -38,10 +39,6 @@ Route::middleware('auth:sanctum')->post(
 
 Route::post('/profile/photo', [ProfileController::class, 'uploadPhoto'])
     ->middleware('auth:sanctum');
-
-Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
-    return $request->user();
-});
 
 Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
     return response()->json([
@@ -140,4 +137,16 @@ Route::middleware('auth:sanctum')->group(function () {
         [CommentController::class, 'store']
     );
 
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post('/favorites/{recipe_id}', [FavoriteController::class, 'store']);
+
+    Route::delete('/favorites/{recipe_id}', [FavoriteController::class, 'destroy']);
+
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+
+    Route::get('/favorites/{recipe_id}/check',
+        [FavoriteController::class, 'check']);
 });

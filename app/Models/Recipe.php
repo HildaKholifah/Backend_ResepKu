@@ -23,6 +23,8 @@ class Recipe extends Model
         'steps' => 'array',
     ];
 
+    protected $appends = ['image_url'];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -36,5 +38,14 @@ class Recipe extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image) {
+            return null;
+        }
+
+        return asset('storage/' . $this->image);
     }
 }
