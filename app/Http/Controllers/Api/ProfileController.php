@@ -63,33 +63,45 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
 
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'current_password' => 'required',
             'new_password' => 'required|min:6|confirmed',
         ]);
 
-        // cek password lama
-        if (!Hash::check(
-            $validated['current_password'],
-            $user->password
-        )) {
-
+        if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => 'Password lama salah'
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        // PASSWORD LAMA HARUS BENAR
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Password lama tidak sesuai.',
             ], 400);
         }
 
-        // update password
-        $user->password = Hash::make(
-            $validated['new_password']
-        );
+        // PASSWORD BARU TIDAK BOLEH SAMA DENGAN PASSWORD LAMA
+        if (Hash::check($request->new_password, $user->password)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Password baru tidak boleh sama dengan password lama.',
+            ], 400);
+        }
 
+        // SIMPAN PASSWORD BARU
+        $user->password = Hash::make($request->new_password);
         $user->save();
+
+        // OPTIONAL
+        // Logout seluruh device
+        $user->tokens()->delete();
 
         return response()->json([
             'status' => true,
-            'message' => 'Password berhasil diubah'
+            'message' => 'Password berhasil diubah.',
         ]);
     }
 
