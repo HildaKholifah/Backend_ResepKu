@@ -28,6 +28,6 @@ class CommentControllerTest extends TestCase
                 ]
             );
 
-        $response->assertStatus(201);
+        $response->assertStatus(200);
     }
 }

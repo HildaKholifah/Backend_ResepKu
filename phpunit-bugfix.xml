@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    bootstrap="vendor/autoload.php"
+    colors="true">
+
+    <testsuites>
+        <testsuite name="Bug Fix">
+            <directory>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <file>tests\Feature\AuthControllerTest.php</file>
+            <file>tests\Feature\ProfileControllerTest.php</file>
+            <file>tests\Feature\RecipeControllerTest.php</file>
+            <file>tests\Feature\CommentControllerTest.php</file>
+        </include>
+    </source>
+
+</phpunit>
